@@ -47,4 +47,29 @@ def match_image(img, template):
 img = cv.imread('furcularia3.jpeg', 0)
 img_teplate= cv.imread('furcularia10_2.jpeg', 0)
 
-match_image(img, img_teplate)
+from pathlib import Path
+import os
+
+def readImages(dir: str):
+	images = []
+	for p in Path(dir).iterdir() :
+		if p.is_file() and str(p).split(".")[-1].lower() in {"jpeg", "jpg", "png"}:
+			with p.open() as f :
+				images.append(f.name)
+	return images
+
+
+	# files = os.listdir(dir_path)
+	# for file in files:
+	# 	if os.path.isfile(os.path.join(dir_path, file)):
+	# 		f = open(os.path.join(dir_path, file),'r')
+	# 		print(f)
+	# 		f.close()
+current_path = Path().absolute()
+etalons = readImages(f"{current_path}/dataset/etalons/furcullaria")
+print(etalons)
+furcullariaImages = readImages(f"{current_path}/dataset/furcullaria")
+print(furcullariaImages)
+
+
+# match_image(img, img_teplate)
