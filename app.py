@@ -3,9 +3,9 @@ from matplotlib import pyplot as pltimg
 
 def match_image(img, template):
 	# image_gray = img.copy()
-	methods = [cv.TM_CCOEFF, cv.TM_CCOEFF_NORMED, cv.TM_CCORR, cv.TM_CCORR_NORMED,
-		cv.TM_SQDIFF, cv.TM_SQDIFF_NORMED] 
-	result_list = []
+	# methods = [cv.TM_CCOEFF, cv.TM_CCOEFF_NORMED, cv.TM_CCORR, cv.TM_CCORR_NORMED,
+	# 	cv.TM_SQDIFF, cv.TM_SQDIFF_NORMED]
+	# result_list = []
 	w, h = template.shape[::-1]
 	match_method = cv.TM_CCOEFF_NORMED
 	res = cv.matchTemplate(img, template, match_method)
@@ -44,11 +44,10 @@ def match_image(img, template):
 	# return result_list
 	
 # img = cv.imread('furcularia9.jpeg', 0)
-img = cv.imread('furcularia3.jpeg', 0)
-img_teplate= cv.imread('furcularia10_2.jpeg', 0)
+# img = cv.imread('furcularia3.jpeg', 0)
+# img_teplate= cv.imread('furcularia10_2.jpeg', 0)
 
 from pathlib import Path
-import os
 
 def readImages(dir: str):
 	images = []
