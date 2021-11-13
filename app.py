@@ -10,19 +10,19 @@ def match_image(img, template):
 	match_method = cv.TM_CCOEFF_NORMED
 	res = cv.matchTemplate(img, template, match_method)
 	minval, maxval, minloc, maxloc = cv.minMaxLoc(res)
-	if match_method in [cv.TM_SQDIFF, cv.TM_SQDIFF_NORMED]:
-		topleft = minloc
-	else:
-		topleft = maxloc
-	btm_right = (topleft[0] + w, topleft[1] + h)
-	print(maxval)
-	cv.rectangle(img, topleft, btm_right, 255, 2)
-	pltimg.subplot(121),pltimg.imshow(res,cmap = 'gray')
-	pltimg.title('Result that matches'), pltimg.xticks([]), pltimg.yticks([])
-	pltimg.subplot(122),pltimg.imshow(img,cmap = 'gray')
-	pltimg.title('Detection Point of image'), pltimg.xticks([]), pltimg.yticks([])
-	pltimg.suptitle(match_method)
-	pltimg.show()
+	# if match_method in [cv.TM_SQDIFF, cv.TM_SQDIFF_NORMED]:
+	# 	topleft = minloc
+	# else:
+	# topleft = maxloc
+	# btm_right = (topleft[0] + w, topleft[1] + h)
+	return maxval
+	# cv.rectangle(img, topleft, btm_right, 255, 2)
+	# pltimg.subplot(121),pltimg.imshow(res,cmap = 'gray')
+	# pltimg.title('Result that matches'), pltimg.xticks([]), pltimg.yticks([])
+	# pltimg.subplot(122),pltimg.imshow(img,cmap = 'gray')
+	# pltimg.title('Detection Point of image'), pltimg.xticks([]), pltimg.yticks([])
+	# pltimg.suptitle(match_method)
+	# pltimg.show()
 	
 	# for match_method in methods:
 		# image = image_gray.copy()
@@ -66,9 +66,13 @@ def readImages(dir: str):
 	# 		f.close()
 current_path = Path().absolute()
 etalons = readImages(f"{current_path}/dataset/etalons/furcullaria")
-print(etalons)
-furcullariaImages = readImages(f"{current_path}/dataset/furcullaria")
-print(furcullariaImages)
+# print(etalons)
+furcullariaImages = readImages(f"{current_path}/dataset/zostera")
+# print(furcullariaImages)
 
 
-# match_image(img, img_teplate)
+for furNieco in furcullariaImages:
+	sum = 0
+	for etalon in etalons:
+		sum += match_image(cv.imread(furNieco, 0), cv.imread(etalon, 0))
+	print(f"{furNieco.split('/')[-1]}: {sum / len(etalons)}")
