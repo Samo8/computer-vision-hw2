@@ -43,10 +43,6 @@ def match_image(img, template):
 		# result_list.append([minval, maxval, minloc, maxloc])
 	# return result_list
 	
-# img = cv.imread('furcularia9.jpeg', 0)
-# img = cv.imread('furcularia3.jpeg', 0)
-# img_teplate= cv.imread('furcularia10_2.jpeg', 0)
-
 from pathlib import Path
 
 def readImages(dir: str):
@@ -58,21 +54,27 @@ def readImages(dir: str):
 	return images
 
 
-	# files = os.listdir(dir_path)
-	# for file in files:
-	# 	if os.path.isfile(os.path.join(dir_path, file)):
-	# 		f = open(os.path.join(dir_path, file),'r')
-	# 		print(f)
-	# 		f.close()
 current_path = Path().absolute()
 etalons = readImages(f"{current_path}/dataset/etalons/furcullaria")
+furcullariaImages = readImages(f"{current_path}/dataset/furcullaria")
 # print(etalons)
-furcullariaImages = readImages(f"{current_path}/dataset/zostera")
-# print(furcullariaImages)
+#mixed_etalons = 
 
+# for etalon in etalons:
+# 	sum = 0
+# 	for furNieco in furcullariaImages:
+# 		sum += match_image(cv.imread(furNieco, 0), cv.imread(etalon, 0))
+# 	average = sum / len(furcullariaImages)
+# 	print(f"{etalon.split('/')[-1]}: {average}")
 
+result_sum = 0
 for furNieco in furcullariaImages:
 	sum = 0
 	for etalon in etalons:
 		sum += match_image(cv.imread(furNieco, 0), cv.imread(etalon, 0))
-	print(f"{furNieco.split('/')[-1]}: {sum / len(etalons)}")
+	
+	average = sum / len(etalons)
+	print(f"{furNieco.split('/')[-1]}: {average}")
+	result_sum += average
+
+print(f"Result -> {result_sum / len(furcullariaImages)}")
