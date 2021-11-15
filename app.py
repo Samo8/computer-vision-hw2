@@ -55,8 +55,8 @@ def readImages(dir: str):
 
 
 current_path = Path().absolute()
-etalons = readImages(f"{current_path}/dataset/etalons/furcullaria")
-furcullariaImages = readImages(f"{current_path}/dataset/furcullaria")
+etalons = readImages(f"{current_path}/dataset/etalons/zostera")
+furcullariaImages = readImages(f"{current_path}/dataset/zostera")
 # print(etalons)
 #mixed_etalons = 
 
