@@ -1,5 +1,8 @@
 import cv2 as cv
-from matplotlib import pyplot as pltimg
+# from matplotlib import pyplot as pltimg
+import matplotlib.pyplot as plt
+from numpy import mat
+
 
 def match_image(img, template):
 	# image_gray = img.copy()
@@ -79,17 +82,29 @@ etalons = readImages(f"{current_path}/dataset/etalons/zostera")
 furcullariaImages = readImages(f"{current_path}/dataset/zostera")
 
 
-sift = cv.xfeatures2d.SIFT_create()
-surf = cv.xfeatures2d.SURF_create()
-orb = cv.ORB_create(nfeatures=1000)
+sift = cv.SIFT_create()
+# surf = cv.SURF_create()
+# orb = cv.ORB_create(nfeatures=1000)
+etalon = cv.imread('/Users/samueldubovec/taltech/computer_vision/its8030-2021-hw2/dataset/etalons/furcullaria/f_etallon8.jpeg', 0)
+image = cv.imread('/Users/samueldubovec/taltech/computer_vision/its8030-2021-hw2/dataset/furcullaria/furcularia11.jpeg', 0)
 
-keypoints_sift, descriptors = sift.detectAndCompute(etalons[0], None)
-keypoints_surf, descriptors = surf.detectAndCompute(etalons[0], None)
-keypoints_orb, descriptors = orb.detectAndCompute(etalons[0], None)
+keypoints_sift_e, descriptors_e = sift.detectAndCompute(etalon, None)
+keypoints_sift_img, descriptors_img = sift.detectAndCompute(image, None)
+# keypoints_surf, descriptors = surf.detectAndCompute(etalons[0], None)
+# keypoints_orb, descriptors = orb.detectAndCompute(etalons[0], None)
 
-img = cv.drawKeypoints(etalons[0], keypoints_sift, None)
+# img = cv.drawKeypoints(image, keypoints_sift_img, None)
 
-cv.imshow("Image", img)
-cv.waitKey(0)
-cv.destroyAllWindows()
+bf = cv.BFMatcher(cv.NORM_L1, crossCheck=True)
+matches = bf.match(descriptors_e, descriptors_img)
+matches = sorted(matches, key = lambda x:x.distance)
 
+print(matches)
+# cv.imshow("Image", img)
+matching_result = cv.drawMatches(etalon,keypoints_sift_e,image,keypoints_sift_img,matches[:10],None,flags=cv.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
+# matching_result = cv.drawMatches(etalon, keypoints_sift_e, image, keypoints_sift_img, matches[:50], None, flags=2)
+# print(matching_result)
+plt.imshow(matching_result),plt.show()
+# cv.imshow("AAA", matching_result)
+# cv.waitKey(0)
+# cv.destroyAllWindows()
