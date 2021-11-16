@@ -53,12 +53,18 @@ def readImages(dir: str):
 				images.append(f.name)
 	return images
 
+def evaluateEtalonOnImages(etalons, images):
+	result_sum = 0
+	for image in images:
+		sum = 0
+		for etalon in etalons:
+			sum += match_image(cv.imread(image, 0), cv.imread(etalon, 0))
+		
+		average = sum / len(etalons)
+		print(f"{image.split('/')[-1]}: {average}")
+		result_sum += average
 
-current_path = Path().absolute()
-etalons = readImages(f"{current_path}/dataset/etalons/zostera")
-furcullariaImages = readImages(f"{current_path}/dataset/zostera")
-# print(etalons)
-#mixed_etalons = 
+	print(f"Result -> {result_sum / len(images)}")
 
 # for etalon in etalons:
 # 	sum = 0
@@ -67,14 +73,23 @@ furcullariaImages = readImages(f"{current_path}/dataset/zostera")
 # 	average = sum / len(furcullariaImages)
 # 	print(f"{etalon.split('/')[-1]}: {average}")
 
-result_sum = 0
-for furNieco in furcullariaImages:
-	sum = 0
-	for etalon in etalons:
-		sum += match_image(cv.imread(furNieco, 0), cv.imread(etalon, 0))
-	
-	average = sum / len(etalons)
-	print(f"{furNieco.split('/')[-1]}: {average}")
-	result_sum += average
 
-print(f"Result -> {result_sum / len(furcullariaImages)}")
+current_path = Path().absolute()
+etalons = readImages(f"{current_path}/dataset/etalons/zostera")
+furcullariaImages = readImages(f"{current_path}/dataset/zostera")
+
+
+sift = cv.xfeatures2d.SIFT_create()
+surf = cv.xfeatures2d.SURF_create()
+orb = cv.ORB_create(nfeatures=1000)
+
+keypoints_sift, descriptors = sift.detectAndCompute(etalons[0], None)
+keypoints_surf, descriptors = surf.detectAndCompute(etalons[0], None)
+keypoints_orb, descriptors = orb.detectAndCompute(etalons[0], None)
+
+img = cv.drawKeypoints(etalons[0], keypoints_sift, None)
+
+cv.imshow("Image", img)
+cv.waitKey(0)
+cv.destroyAllWindows()
+
