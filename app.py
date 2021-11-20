@@ -1,7 +1,7 @@
 import cv2 as cv
 # from matplotlib import pyplot as pltimg
 import matplotlib.pyplot as plt
-from numpy import mat
+import numpy as np
 
 
 def match_image(img, template):
@@ -69,6 +69,23 @@ def evaluateEtalonOnImages(etalons, images):
 
 	print(f"Result -> {result_sum / len(images)}")
 
+def getKeypointsAndDescriptors(imagePaths):
+	sift = cv.SIFT_create()
+	keypoints = []
+	descriptors = []
+	for path in imagePaths:
+		keypoint, descriptor = sift.detectAndCompute(cv.imread(path), None)
+		keypoints.append(keypoint)
+		descriptors.append(descriptor)
+	return keypoints, descriptors
+
+def flattenList(list):
+	flatten_list = []
+	for subl in list:
+		for item in subl:
+			flatten_list.append(item)
+	return flatten_list
+
 # for etalon in etalons:
 # 	sum = 0
 # 	for furNieco in furcullariaImages:
@@ -79,32 +96,51 @@ def evaluateEtalonOnImages(etalons, images):
 
 current_path = Path().absolute()
 etalons = readImages(f"{current_path}/dataset/etalons/zostera")
-furcullariaImages = readImages(f"{current_path}/dataset/zostera")
+dataset = readImages(f"{current_path}/dataset/zostera")
 
-
-sift = cv.SIFT_create()
+# sift = cv.SIFT_create()
 # surf = cv.SURF_create()
 # orb = cv.ORB_create(nfeatures=1000)
-etalon = cv.imread('/Users/samueldubovec/taltech/computer_vision/its8030-2021-hw2/dataset/etalons/furcullaria/f_etallon8.jpeg', 0)
-image = cv.imread('/Users/samueldubovec/taltech/computer_vision/its8030-2021-hw2/dataset/furcullaria/furcularia11.jpeg', 0)
+# etalon = cv.imread('./dataset/etalons/furcullaria/f_etallon8.jpeg', 0)
+# image = cv.imread('./dataset/furcullaria/furcellaria3.jpeg', 0)
 
-keypoints_sift_e, descriptors_e = sift.detectAndCompute(etalon, None)
-keypoints_sift_img, descriptors_img = sift.detectAndCompute(image, None)
+keypoints_e, descriptors_e = getKeypointsAndDescriptors(etalons)
+descriptors_e = flattenList(descriptors_e)
+keypoints_e = flattenList(keypoints_e)
+# print(np.array(descriptors_e).shape())
+
+keypoints_sift_img, descriptors_img = getKeypointsAndDescriptors(dataset)
+
+# print(descriptors_e.shape)
+# keypoints_sift_e, descriptors_e = sift.detectAndCompute(etalon, None)
+# keypoints_sift_img, descriptors_img = sift.detectAndCompute(image, None)
 # keypoints_surf, descriptors = surf.detectAndCompute(etalons[0], None)
 # keypoints_orb, descriptors = orb.detectAndCompute(etalons[0], None)
 
 # img = cv.drawKeypoints(image, keypoints_sift_img, None)
 
-bf = cv.BFMatcher(cv.NORM_L1, crossCheck=True)
-matches = bf.match(descriptors_e, descriptors_img)
-matches = sorted(matches, key = lambda x:x.distance)
+matcher = cv.FlannBasedMatcher()
 
-print(matches)
-# cv.imshow("Image", img)
-matching_result = cv.drawMatches(etalon,keypoints_sift_e,image,keypoints_sift_img,matches[:10],None,flags=cv.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
-# matching_result = cv.drawMatches(etalon, keypoints_sift_e, image, keypoints_sift_img, matches[:50], None, flags=2)
+bf = cv.BFMatcher()
+for ind, desc in enumerate(descriptors_img):
+	# print(np.array(desc, dtype=object))
+	matches = bf.knnMatch(descriptors_e,np.array(desc, dtype=object))
+	good = []
+	for m,n in matches:
+		if m.distance < 0.75*n.distance:
+			good.append([m])
+	print(f"{ind} -> {len(good)}")
+
+# matching_result = cv.drawMatches(etalon, keypoints_sift_e, image, keypoints_sift_img, good, None, flags=2)
 # print(matching_result)
-plt.imshow(matching_result),plt.show()
+# matches = bf.match(descriptors_e, descriptors_img)
+# matches = sorted(matches, key = lambda x:x.distance)
+
+# cv2.drawMatchesKnn expects list of lists as matches.
+# img3 = cv.drawMatchesKnn(img1,kp1,img2,kp2,good,flags=2)
+
+# print(matches)
+# cv.imshow("Image", img)
 # cv.imshow("AAA", matching_result)
 # cv.waitKey(0)
 # cv.destroyAllWindows()
