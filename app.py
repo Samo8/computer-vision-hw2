@@ -119,15 +119,16 @@ keypoints_sift_img, descriptors_img = getKeypointsAndDescriptors(dataset)
 
 # img = cv.drawKeypoints(image, keypoints_sift_img, None)
 
-matcher = cv.FlannBasedMatcher()
+matcher = cv.FlannBasedMatcher(dict(algorithm = 0), dict(checks = 200))
 
 bf = cv.BFMatcher()
 for ind, desc in enumerate(descriptors_img):
-	# print(np.array(desc, dtype=object))
-	matches = bf.knnMatch(descriptors_e,np.array(desc, dtype=object))
+	matches = matcher.knnMatch(np.array(descriptors_e), np.array(desc), 2)
+	m = np.array(matches)
+	print(m.shape)
 	good = []
 	for m,n in matches:
-		if m.distance < 0.75*n.distance:
+		if m.distance < 0.75 * n.distance:
 			good.append([m])
 	print(f"{ind} -> {len(good)}")
 
