@@ -1,0 +1,4 @@
+# label:color_rgb:parts:actions
+background:0,0,0::
+furcullaria:128,0,0::
+zostera:0,128,0::
