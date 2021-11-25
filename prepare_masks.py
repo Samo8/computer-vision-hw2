@@ -32,14 +32,14 @@ def loadImagesAndMasks():
 
         result.append((image, mask))
         
-    return result
+    return np.array(result, dtype=object)
 
-imagesWithMasks = loadImagesAndMasks()
+# imagesWithMasks = loadImagesAndMasks()
 
-for data in imagesWithMasks:
-    for img in data:
-        plt.imshow(img)
-        plt.show()
+# for data in imagesWithMasks:
+#     for img in data:
+#         plt.imshow(img)
+#         plt.show()
 
 # for x in imagesWithMasks[11]:
 #     plt.imshow(x)    
