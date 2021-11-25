@@ -32,7 +32,7 @@ def loadImagesAndMasks():
 
         result.append((image, mask))
         
-    return np.array(result, dtype=object)
+    return result
 
 # imagesWithMasks = loadImagesAndMasks()
 
