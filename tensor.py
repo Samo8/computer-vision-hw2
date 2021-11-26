@@ -3,9 +3,11 @@ import tensorflow_datasets as tfds
 
 import prepare_masks as prep
 import utils
+import glob
 from matplotlib import pyplot as plt
 from functools import partial
 
+import IPython.display as display
 
 
 # data = prep.loadImagesAndMasks()
@@ -13,7 +15,7 @@ from functools import partial
 # https://keras.io/examples/keras_recipes/tfrecord/
 
 IMAGE_SIZE = [1024, 1024]
-BATCH_SIZE = 64
+BATCH_SIZE = 4
 AUTOTUNE = tf.data.AUTOTUNE
 
 def decode_image(image):
@@ -43,12 +45,15 @@ def load_dataset(filenames, labeled=True):
     ignore_order = tf.data.Options()
     ignore_order.experimental_deterministic = False  # disable order, increase speed
     dataset = tf.data.TFRecordDataset(filenames)
+    # print(list(dataset.as_numpy_iterator()))
     dataset = dataset.with_options(
         ignore_order
     )  # uses data as soon as it streams in, rather than in its original order
     dataset = dataset.map(
         partial(read_tfrecord, labeled=labeled), num_parallel_calls=AUTOTUNE
     )
+    for batch in dataset:
+        print("x = {x:.4f},  y = {y:.4f}".format(**batch))
     # returns a dataset of (image, label) pairs if labeled=True or just images if labeled=False
     return dataset
 
@@ -63,26 +68,62 @@ def get_dataset(filenames, labeled=True):
     return dataset
 
 
-train_dataset = get_dataset('task_taltech_cv-2021_11_24_20_25_56-tfrecord 1.0/default.tfrecord')
+# train_dataset = get_dataset('task_taltech_cv-2021_11_24_20_25_56-tfrecord 1.0/default.tfrecord')
+filenames = ['task_taltech_cv-2021_11_24_20_25_56-tfrecord 1.0/default.tfrecord']
+raw_dataset = tf.data.TFRecordDataset(filenames)
+# print(raw_dataset)
+for raw_record in raw_dataset.take(2):
+  example = tf.train.Example()
+  example.ParseFromString(raw_record.numpy())
+  print(example)
+
+image_feature_description = {
+    # 'height': tf.io.FixedLenFeature([], tf.int64),
+    'image/width': tf.io.FixedLenFeature([], tf.int64),
+    'image/height': tf.io.FixedLenFeature([], tf.int64),
+    # 'image': tf.io.FixedLenFeature([], tf.string),
+}
+
+def _parse_image_function(example_proto):
+  # Parse the input tf.train.Example proto using the dictionary above.
+  return tf.io.parse_single_example(example_proto, image_feature_description)
+
+parsed_image_dataset = raw_dataset.map(_parse_image_function)
+print(parsed_image_dataset)
+
+# for image_features in parsed_image_dataset:
+#   image_raw = image_features['image'].numpy()
+#   print(image_raw)
+#   display.display(display.Image(data=image_raw))
+
+    # for raw_record in image_features:
+    #     example = tf.train.Example()
+    #     example.ParseFromString(raw_record.numpy())
+    #     print(example)
+# parsed_image_dataset
+# for raw_record in raw_dataset.take(2):
+#   example = tf.train.Example()
+#   example.ParseFromString(raw_record.numpy())
+#   print(example)
 # valid_dataset = get_dataset(VALID_FILENAMES)
 # test_dataset = get_dataset(TEST_FILENAMES, labeled=False)
 
-image_batch, label_batch = next(iter(train_dataset))
+# image_batch, label_batch = next(iter(train_dataset))
 
 
-def show_batch(image_batch, label_batch):
-    plt.figure(figsize=(10, 10))
-    for n in range(25):
-        ax = plt.subplot(5, 5, n + 1)
-        plt.imshow(image_batch[n] / 255.0)
-        if label_batch[n]:
-            plt.title("MALIGNANT")
-        else:
-            plt.title("BENIGN")
-        plt.axis("off")
+# def show_batch(image_batch, label_batch):
+#     plt.figure(figsize=(10, 10))
+#     for n in range(25):
+#         ax = plt.subplot(5, 5, n + 1)
+#         plt.imshow(image_batch[n] / 255.0)
+#         if label_batch[n]:
+#             plt.title("MALIGNANT")
+#         else:
+#             plt.title("BENIGN")
+#         plt.axis("off")
 
 
-show_batch(image_batch.numpy(), label_batch.numpy())
+# show_batch(image_batch.numpy(), label_batch.numpy())
 
 # mobile = tf.keras.applications.mobilenet.MobileNet()
 # print(mobile.summary())

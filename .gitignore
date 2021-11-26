@@ -1,1 +1,3 @@
 .DS_Store
+cocoapi
+__pycache__/
