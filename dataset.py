@@ -17,9 +17,10 @@ class CarvanaDataset(Dataset):
         img_path = os.path.join(self.image_dir, self.images[index])
         mask_path = os.path.join(self.mask_dir, self.images[index])
         image = np.array(Image.open(img_path).convert("RGB"))
-        mask = np.array(Image.open(mask_path).convert("L"), dtype=np.float32)
+        # mask = np.array(Image.open(mask_path).convert("L"), dtype=np.float32)
+        mask = np.array(Image.open(mask_path).convert("L"))
 
-        print(mask.shape())
+        # print(mask.shape())
         print(mask)
         # mask = np.array(Image.open(mask_path).convert("RGB"))
 
