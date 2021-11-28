@@ -15,11 +15,14 @@ class CarvanaDataset(Dataset):
 
     def __getitem__(self, index):
         img_path = os.path.join(self.image_dir, self.images[index])
-        mask_path = os.path.join(self.mask_dir, self.images[index]
-        # .replace(".jpg", "_mask.gif")
-        )
+        mask_path = os.path.join(self.mask_dir, self.images[index])
         image = np.array(Image.open(img_path).convert("RGB"))
         mask = np.array(Image.open(mask_path).convert("L"), dtype=np.float32)
+
+        print(mask.shape())
+        print(mask)
+        # mask = np.array(Image.open(mask_path).convert("RGB"))
+
         mask[mask == 255.0] = 1.0
 
         if self.transform is not None:
