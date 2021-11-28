@@ -27,6 +27,7 @@ def get_loaders(
         mask_dir=train_maskdir,
         transform=train_transform,
     )
+    print(train_ds)
 
     train_loader = DataLoader(
         train_ds,
@@ -35,7 +36,7 @@ def get_loaders(
         pin_memory=pin_memory,
         shuffle=True,
     )
-
+    print("Train loader initialized")
     val_ds = CarvanaDataset(
         image_dir=val_dir,
         mask_dir=val_maskdir,
@@ -49,6 +50,7 @@ def get_loaders(
         pin_memory=pin_memory,
         shuffle=False,
     )
+    print("Validation loader initialized")
 
     return train_loader, val_loader
 

@@ -2,26 +2,31 @@ import os
 from PIL import Image
 from torch.utils.data import Dataset
 import numpy as np
+import prepare_masks as prep
 
 class CarvanaDataset(Dataset):
     def __init__(self, image_dir, mask_dir, transform=None):
         self.image_dir = image_dir
         self.mask_dir = mask_dir
         self.transform = transform
-        self.images = os.listdir(image_dir)
+        # self.images = os.listdir(image_dir)
+        self.images_and_masks = prep.loadImagesAndMasks('./data/train_images')
+        print(len(self.images_and_masks))
 
     def __len__(self):
-        return len(self.images)
+        return len(self.images_and_masks)
 
     def __getitem__(self, index):
-        img_path = os.path.join(self.image_dir, self.images[index])
-        mask_path = os.path.join(self.mask_dir, self.images[index])
-        image = np.array(Image.open(img_path).convert("RGB"))
+        # img_path = os.path.join(self.image_dir, self.images[index])
+        # mask_path = os.path.join(self.mask_dir, self.images[index])
+        
+        print(f"index: {index} in __getitem__")
+        image, mask, _ = self.images_and_masks[index]
+        # image = np.array(Image.open(img_path).convert("RGB"))
         # mask = np.array(Image.open(mask_path).convert("L"), dtype=np.float32)
-        mask = np.array(Image.open(mask_path).convert("L"))
+        # mask = np.array(Image.open(mask_path).convert("L"))
 
         # print(mask.shape())
-        print(mask)
         # mask = np.array(Image.open(mask_path).convert("RGB"))
 
         mask[mask == 255.0] = 1.0

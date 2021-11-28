@@ -93,13 +93,14 @@ def main():
         NUM_WORKERS,
         PIN_MEMORY,
     )
-
+    print("Got LOADERS")
     if LOAD_MODEL:
         load_checkpoint(torch.load("my_checkpoint.pth.tar"), model)
 
 
     check_accuracy(val_loader, model, device=DEVICE)
     scaler = torch.cuda.amp.GradScaler()
+    print("BEFORE RAISE")
 
     raise "dsafs"
 

@@ -5,13 +5,12 @@ import os
 from matplotlib import pyplot as plt
 
 coco = COCO('./annotations/instances_default.json')
-img_dir = './dataset/'
 
-
-def loadImagesAndMasks():
+def loadImagesAndMasks(img_dir):
     result = []
     for id in coco.imgs:
         one = coco.imgs[id]
+        image = np.array([])
         try:
             image = np.array(Image.open(os.path.join(img_dir + 'furcullaria/', one['file_name'])))
         except Exception:
@@ -34,10 +33,10 @@ def loadImagesAndMasks():
         
     return result
 
-imagesWithMasks = loadImagesAndMasks()
+# imagesWithMasks = loadImagesAndMasks()
 
-for data in imagesWithMasks:
-    plt.imsave(f'./masks/{data[2]}', data[1])
+# for data in imagesWithMasks:
+#     plt.imsave(f'./masks/{data[2]}', data[1])
 
     # for img in data:
     #     plt.imshow(data[1])
