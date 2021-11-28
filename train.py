@@ -33,7 +33,8 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
 
     for batch_idx, (data, targets) in enumerate(loop):
         data = data.to(device=DEVICE)
-        targets = targets.float().unsqueeze(1).to(device=DEVICE)
+        # targets = targets.float().unsqueeze(1).to(device=DEVICE)
+        targets = targets.long().squeeze(1).to(device=DEVICE)
 
         # forward
         with torch.cuda.amp.autocast():
@@ -78,8 +79,9 @@ def main():
         ],
     )
 
-    model = UNET(in_channels=3, out_channels=1).to(DEVICE)
-    loss_fn = nn.BCEWithLogitsLoss()
+    model = UNET(in_channels=3, out_channels=2).to(DEVICE)
+    # loss_fn = nn.BCEWithLogitsLoss()
+    loss_fn = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
     train_loader, val_loader = get_loaders(
@@ -102,7 +104,7 @@ def main():
     scaler = torch.cuda.amp.GradScaler()
     print("BEFORE RAISE")
 
-    raise "dsafs"
+    # raise "MOJ ERROOOOR TENTO MOZE BYT"
 
     for epoch in range(NUM_EPOCHS):
         train_fn(train_loader, model, optimizer, loss_fn, scaler)
