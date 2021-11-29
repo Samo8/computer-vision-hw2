@@ -30,13 +30,10 @@ class CarvanaDataset(Dataset):
 
         mask, className = self.maskCreator.__createMask__(self.images[index])
 
-        print(className)
 
         if className == "furcullaria":
             mask[mask == 1.0] = 2.0
         
-        print(mask)
-
         # check unique values
         # uniq_values = []
         # for i in range(mask.shape[0]):
