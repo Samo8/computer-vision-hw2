@@ -85,10 +85,11 @@ def save_predictions_as_imgs(
     for idx, (x, y) in enumerate(loader):
         x = x.to(device=device)
         with torch.no_grad():
-            preds = torch.sigmoid(model(x))
-            preds = (preds > 0.5).float()
+            preds = torch.relu(model(x))
+            preds = (preds > 0).float()
+            preds[preds > 0] = torch.unique(y)[1]
         torchvision.utils.save_image(
-            preds, f"{folder}/pred_{idx}.png"
+            torchvision.transforms.functional.rgb_to_grayscale(preds), f"{folder}/pred_{idx}.png"
         )
         torchvision.utils.save_image(y.unsqueeze(1), f"{folder}{idx}.png")
 
