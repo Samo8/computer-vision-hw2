@@ -33,7 +33,9 @@ class CarvanaDataset(Dataset):
         print(className)
 
         if className == "furcullaria":
-            mask[mask == 1.0] = 1.0
+            mask[mask == 1.0] = 2.0
+        
+        print(mask)
 
         # check unique values
         # uniq_values = []
