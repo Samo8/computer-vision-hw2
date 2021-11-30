@@ -17,10 +17,10 @@ from utils import (
 LEARNING_RATE = 1e-4
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 BATCH_SIZE = 1
-NUM_EPOCHS = 1
+NUM_EPOCHS = 50
 NUM_WORKERS = 4
-IMAGE_HEIGHT = 256  # 1280 originally
-IMAGE_WIDTH = 256  # 1918 originally
+IMAGE_HEIGHT = 256  # 1024 originally
+IMAGE_WIDTH = 256  # 1024 originally
 PIN_MEMORY = True
 LOAD_MODEL = False
 TRAIN_IMG_DIR = "data/train_images/"
