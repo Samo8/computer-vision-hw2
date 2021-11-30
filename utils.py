@@ -27,7 +27,6 @@ def get_loaders(
         mask_dir=train_maskdir,
         transform=train_transform,
     )
-    print(train_ds)
 
     train_loader = DataLoader(
         train_ds,
@@ -37,6 +36,7 @@ def get_loaders(
         shuffle=True,
     )
     print("Train loader initialized")
+
     val_ds = CarvanaDataset(
         image_dir=val_dir,
         mask_dir=val_maskdir,
@@ -72,25 +72,18 @@ def check_accuracy(loader, model, device="cuda"):
                 (preds + y).sum() + 1e-8
             )
 
-    print(
-        f"Got {num_correct}/{num_pixels} with acc {num_correct/num_pixels*100:.2f}"
-    )
+    print( f"Got {num_correct}/{num_pixels} with acc {num_correct/num_pixels*100:.2f}")
     print(f"Dice score: {dice_score/len(loader)}")
     model.train()
 
-def save_predictions_as_imgs(
-    loader, model, folder="saved_images/", device="cuda"
-):
+def save_predictions_as_imgs( loader, model, folder="saved_images/", device="cuda"):
     model.eval()
     for idx, (x, y) in enumerate(loader):
         x = x.to(device=device)
         with torch.no_grad():
-            preds = torch.relu(model(x))
-            preds = (preds > 0).float()
-            preds[preds > 0] = torch.unique(y)[1]
-        torchvision.utils.save_image(
-            torchvision.transforms.functional.rgb_to_grayscale(preds), f"{folder}/pred_{idx}.png"
-        )
+            preds = torch.relu(model(x)).float()
+            preds = torch.max(preds, 1, True)[0]
+        torchvision.utils.save_image(preds, f"{folder}/pred_{idx}.png")
         torchvision.utils.save_image(y.unsqueeze(1), f"{folder}{idx}.png")
 
     model.train()
